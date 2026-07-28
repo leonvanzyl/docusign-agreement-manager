@@ -3,6 +3,12 @@
 An internal tool for managing the team's contracts. Three screens: a login, an
 agreements register, and an assistant.
 
+![The agreements register, showing three envelopes imported from Docusign eSignature](docs/agreements.jpg)
+
+The register, imported from a live Docusign account. The `ESIGNATURE` chips mark rows
+built from envelopes rather than Agreement Manager records — which is also why their
+value and expiry columns are empty. An envelope doesn't carry a term.
+
 ## Running it
 
 You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) running —
@@ -51,6 +57,12 @@ an audit log.
 The chat is backed by an agent built with the
 [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk), running Claude Opus 5.
 Its one capability is Docusign, reached through Docusign's remote MCP server.
+
+![The assistant answering a question, showing the Docusign tool calls it made](docs/assistant.jpg)
+
+Every Docusign call is surfaced as it runs — here the agent reaches for Agreement
+Manager to answer a question about the portfolio, which is the routing the system
+prompt asks for. The table is for display; Agreement Manager is the query layer.
 
 | File | What it does |
 | --- | --- |
