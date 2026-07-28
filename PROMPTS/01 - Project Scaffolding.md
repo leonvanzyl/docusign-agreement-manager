@@ -1,0 +1,1 @@
+Let's start a new app. Build an app called "Agreement Agent" - an internal tool an enterprise team uses to manage its contracts. Three screens: a login screen, a chat panel, and an Agreements table. No Docusign yet - just the shell, working auth, and a clean, professional enterprise-looking UI.

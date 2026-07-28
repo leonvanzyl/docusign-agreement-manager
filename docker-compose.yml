@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:17-alpine
+    # Attach to Docker's built-in bridge instead of creating a per-project network.
+    # This machine has exhausted Docker's predefined address pools, and the app only
+    # ever reaches Postgres over the published port below, so no custom network is needed.
+    # If you later prune unused networks (`docker network prune`), this line can be removed.
+    network_mode: bridge
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: app
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

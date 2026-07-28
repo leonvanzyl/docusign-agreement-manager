@@ -1,26 +1,198 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ---------------------------------------------------------------------------
+   Agreement Agent — visual direction
+   Deep indigo primary on cool-grey neutrals, tight 0.3rem radius. Reads as
+   serious enterprise software rather than a consumer app.
+
+   Every colour in the app lives in this file. Components reference these
+   variables (or the .status-* classes at the bottom) and never hard-code a
+   colour of their own.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Faint cool-grey canvas so white cards and table surfaces lift off the page. */
+  --background: oklch(0.985 0.002 265);
+  --foreground: oklch(0.21 0.02 265);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.02 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.02 265);
+  --primary: oklch(0.4 0.15 264);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.96 0.004 265);
+  --secondary-foreground: oklch(0.28 0.03 265);
+  --muted: oklch(0.96 0.004 265);
+  --muted-foreground: oklch(0.52 0.02 265);
+  --accent: oklch(0.955 0.008 265);
+  --accent-foreground: oklch(0.28 0.03 265);
+  --destructive: oklch(0.55 0.2 25);
+  --border: oklch(0.91 0.005 265);
+  --input: oklch(0.91 0.005 265);
+  --ring: oklch(0.4 0.15 264);
+  --chart-1: oklch(0.4 0.15 264);
+  --chart-2: oklch(0.55 0.12 200);
+  --chart-3: oklch(0.6 0.12 155);
+  --chart-4: oklch(0.68 0.13 80);
+  --chart-5: oklch(0.58 0.18 25);
+  --radius: 0.3rem;
+  --sidebar: oklch(0.97 0.003 265);
+  --sidebar-foreground: oklch(0.21 0.02 265);
+  --sidebar-primary: oklch(0.4 0.15 264);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.955 0.008 265);
+  --sidebar-accent-foreground: oklch(0.28 0.03 265);
+  --sidebar-border: oklch(0.91 0.005 265);
+  --sidebar-ring: oklch(0.4 0.15 264);
+
+  /* Agreement status palette. Paired bg/fg so contrast holds in both themes. */
+  --status-draft-bg: oklch(0.95 0.004 265);
+  --status-draft-fg: oklch(0.44 0.02 265);
+  --status-in_review-bg: oklch(0.96 0.05 85);
+  --status-in_review-fg: oklch(0.47 0.1 70);
+  --status-out_for_signature-bg: oklch(0.95 0.045 264);
+  --status-out_for_signature-fg: oklch(0.45 0.15 264);
+  --status-executed-bg: oklch(0.95 0.05 155);
+  --status-executed-fg: oklch(0.43 0.11 155);
+  --status-expired-bg: oklch(0.95 0.04 22);
+  --status-expired-fg: oklch(0.5 0.17 25);
+  /* Voided sits next to expired but reads as struck-out rather than urgent. */
+  --status-voided-bg: oklch(0.95 0.008 300);
+  --status-voided-fg: oklch(0.48 0.04 305);
+}
+
+.dark {
+  --background: oklch(0.16 0.012 265);
+  --foreground: oklch(0.97 0.003 265);
+  --card: oklch(0.205 0.014 265);
+  --card-foreground: oklch(0.97 0.003 265);
+  --popover: oklch(0.205 0.014 265);
+  --popover-foreground: oklch(0.97 0.003 265);
+  /* Lifted well above the primary used on white — the deep indigo would vanish here. */
+  --primary: oklch(0.68 0.15 266);
+  --primary-foreground: oklch(0.17 0.03 265);
+  --secondary: oklch(0.26 0.014 265);
+  --secondary-foreground: oklch(0.97 0.003 265);
+  --muted: oklch(0.26 0.014 265);
+  --muted-foreground: oklch(0.7 0.02 265);
+  --accent: oklch(0.28 0.018 265);
+  --accent-foreground: oklch(0.97 0.003 265);
+  --destructive: oklch(0.7 0.18 22);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.68 0.15 266);
+  --chart-1: oklch(0.68 0.15 266);
+  --chart-2: oklch(0.7 0.12 200);
+  --chart-3: oklch(0.72 0.12 155);
+  --chart-4: oklch(0.78 0.13 80);
+  --chart-5: oklch(0.7 0.16 25);
+  --sidebar: oklch(0.185 0.014 265);
+  --sidebar-foreground: oklch(0.97 0.003 265);
+  --sidebar-primary: oklch(0.68 0.15 266);
+  --sidebar-primary-foreground: oklch(0.17 0.03 265);
+  --sidebar-accent: oklch(0.28 0.018 265);
+  --sidebar-accent-foreground: oklch(0.97 0.003 265);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.68 0.15 266);
+
+  --status-draft-bg: oklch(0.28 0.012 265);
+  --status-draft-fg: oklch(0.78 0.015 265);
+  --status-in_review-bg: oklch(0.31 0.055 85);
+  --status-in_review-fg: oklch(0.85 0.1 85);
+  --status-out_for_signature-bg: oklch(0.3 0.08 264);
+  --status-out_for_signature-fg: oklch(0.83 0.1 266);
+  --status-executed-bg: oklch(0.3 0.07 155);
+  --status-executed-fg: oklch(0.84 0.13 155);
+  --status-expired-bg: oklch(0.31 0.085 22);
+  --status-expired-fg: oklch(0.84 0.11 22);
+  --status-voided-bg: oklch(0.29 0.02 305);
+  --status-voided-fg: oklch(0.8 0.035 305);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Status badge colours, keyed by the database enum value. */
+  .status-draft {
+    background-color: var(--status-draft-bg);
+    color: var(--status-draft-fg);
+  }
+  .status-in_review {
+    background-color: var(--status-in_review-bg);
+    color: var(--status-in_review-fg);
+  }
+  .status-out_for_signature {
+    background-color: var(--status-out_for_signature-bg);
+    color: var(--status-out_for_signature-fg);
+  }
+  .status-executed {
+    background-color: var(--status-executed-bg);
+    color: var(--status-executed-fg);
+  }
+  .status-expired {
+    background-color: var(--status-expired-bg);
+    color: var(--status-expired-fg);
+  }
+  .status-voided {
+    background-color: var(--status-voided-bg);
+    color: var(--status-voided-fg);
+  }
 }

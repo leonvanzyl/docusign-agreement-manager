@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "start-an-app": {
+      "source": "leonvanzyl/skills",
+      "sourceType": "github",
+      "skillPath": "skills/start-an-app/SKILL.md",
+      "computedHash": "ee1a94e57dbf512d8533a1498a9b527bc8db7bfbbce44100e61b57714a1a5a15"
+    }
+  }
+}
