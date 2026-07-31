@@ -10,7 +10,7 @@ import { getDocusignConfig, type DocusignConfig } from "./config";
  * a public/PKCE flow.
  *
  * Scope note: these are calls to Docusign's *authentication* service, not to the
- * eSignature or Navigator REST APIs. Obtaining and renewing the token is the whole
+ * eSignature or Agreement Manager REST APIs. Obtaining and renewing the token is the whole
  * job here — actually using it to do Docusign work belongs to the MCP server.
  */
 
