@@ -37,6 +37,96 @@ Create an account at `/sign-up` and you'll land on the register.
 `/` isn't a screen; it sends you to the register when signed in and the login screen
 when not.
 
+## How it fits together
+
+Everything runs inside one Next.js app. There are three things outside it: Postgres,
+the Claude Agent SDK, and Docusign — and Docusign is reached twice, once for OAuth
+and once, through the agent, for the actual work.
+
+```mermaid
+flowchart TB
+    subgraph browser["Browser"]
+        s_auth["/sign-in and /sign-up"]
+        s_register["/agreements — the register"]
+        s_chat["/chat — the assistant"]
+    end
+
+    subgraph server["Next.js server"]
+        subgraph edge_layer["Route handlers and server actions"]
+            r_auth["/api/auth<br/>Better Auth"]
+            r_oauth["/api/docusign<br/>connect and callback"]
+            r_chat["/api/chat<br/>streams NDJSON events"]
+            a_sync["syncAgreements"]
+            a_rows["agreements page query<br/>delete, samples, loadMessages"]
+        end
+
+        session["session.ts<br/>every handler re-reads the session and<br/>scopes its query to that user"]
+
+        subgraph agent_lib["Agent — the only Docusign client in the app"]
+            g_run["agent/run.ts<br/>one chat turn, narrated"]
+            g_sync["agent/sync.ts<br/>headless turn, returns JSON"]
+            g_options["agent/options.ts<br/>no built-in tools, no settings sources,<br/>one grant: mcp__docusign__*"]
+        end
+
+        subgraph ds_lib["Docusign"]
+            d_sync["docusign/sync.ts<br/>snapshot upsert, prune"]
+            d_merge["docusign/agreements.ts<br/>map statuses, merge, de-duplicate"]
+            d_conn["docusign/connection.ts and oauth.ts<br/>token store, refresh, consent flow"]
+        end
+
+        dbl["lib/db — Drizzle<br/>agreement, conversation, message, docusign_connection"]
+    end
+
+    subgraph external["Outside the app"]
+        sdk["Claude Agent SDK<br/>Claude Opus 5 over Claude Code OAuth"]
+        mcp["Docusign MCP server"]
+        dsauth["Docusign account service"]
+        pg[("Postgres")]
+    end
+
+    s_auth --> r_auth
+    s_register --> a_rows
+    s_register --> a_sync
+    s_register --> r_oauth
+    s_chat <-->|"NDJSON: text, tool calls, register-changed"| r_chat
+    s_chat --> a_rows
+    s_chat -.->|"re-imports in the background"| a_sync
+
+    r_auth --> session
+    r_chat --> session
+    a_sync --> session
+    a_rows --> session
+    r_oauth --> d_conn
+
+    r_chat -->|"prompt, resume session id"| g_run
+    r_chat -->|"access token"| d_conn
+    a_sync --> d_sync
+    d_sync --> g_sync
+    g_sync -->|"two lists as JSON"| d_merge
+    d_merge -->|"merged rows"| d_sync
+    g_run --> g_options
+    g_sync --> g_options
+
+    session --> dbl
+    r_chat -->|"messages, tool calls, session id"| dbl
+    a_rows --> dbl
+    d_conn --> dbl
+    d_sync -->|"upsert on external key, prune what Docusign dropped"| dbl
+
+    g_options --> sdk
+    sdk -->|"bearer token, MCP connection only"| mcp
+    mcp --> dsauth
+    d_conn -->|"consent, code exchange, refresh"| dsauth
+    dbl --> pg
+```
+
+Two paths are worth tracing. A **chat turn** goes `/chat` → `/api/chat` → `run.ts` →
+the SDK → Docusign's MCP server, and streams back token by token; if the agent
+changed something upstream, the browser quietly re-runs the import. A **register
+sync** goes the same way but headless — `sync.ts` asks the agent for both Docusign
+lists as JSON, `agreements.ts` merges them, and the result replaces the imported rows
+in Postgres.
+
 ## What's real and what isn't
 
 **Real:** accounts and sign-in, the database, the agreements table with search,
