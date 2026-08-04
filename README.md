@@ -146,7 +146,7 @@ an audit log.
 
 The chat is backed by an agent built with the
 [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk), running Claude Opus 5.
-Its one capability is Docusign, reached through Docusign's remote MCP server.
+Its one capability is Docusign, reached through Docusign's [remote MCP server](https://developers.docusign.com/platform/mcp-server/).
 
 ![The assistant answering a question, showing the Docusign tool calls it made](docs/assistant.jpg)
 
@@ -203,7 +203,7 @@ The agreements table is built from Docusign, and Docusign answers the question t
 - **eSignature** knows about envelopes the moment they're sent, including ones still
   going round for signature. It's the only source that can show something in flight —
   but an envelope carries no value and no term.
-- **Agreement Manager** knows about agreements once they exist as agreements, with the
+- **[Agreement Manager](https://developers.docusign.com/docs/agreement-manager-api/)** knows about agreements once they exist as agreements, with the
   counterparty, the value and the dates. Richer, but it has nothing to say about the
   envelope you sent thirty seconds ago.
 
